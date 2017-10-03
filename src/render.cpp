@@ -1,60 +1,121 @@
 #include "../include/render.h"
 
-
-void 
-Render::findColor(Ray & r_, color & c_)
+color 
+Render::findColor(Ray & r_, int times)
 {
+	HitRecord rec;
+
+	if (times == 10)
+		return color (0,0,0);
+
+	if(scene->hit(r_, min_depth, max_depth, rec))
+	{
+		Ray scattered;
+		vec3 attenuation;
+		if (rec.material->scatter(r_, rec, attenuation, scattered))
+			return attenuation*findColor(scattered, times+1);
+	}
+	else
+	{		
+		if(times == 0)
+		{
+			vec3 unit_direction = unit_vector(r_.get_direction());
+			float t = 0.5*(unit_direction.y() + 1.0);
+			return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
+		}
+		else
+		{
+			color cLight;
+
+			for (int i = 0; i < scene->GetNofLights(); ++i)
+			{
+				cLight += scene->getSunColor(i);
+			}
+			normalizeColor(cLight);
+			return cLight;
+		}
+	}
+}
+
+
+color 
+Render::blinnPhong(Ray & r_)
+{
+	color ka, kd, ks;
+	color c_, tmp;
+
 	auto x = (r_.get_direction() - r_.get_origin());
 
 	HitRecord t;
 
-	c_ = color(0,0,0);
-
 	if(scene->hit(r_, min_depth, max_depth, t))
 	{
+		
+		//===============================================================================================================
 		//AMBIENT COLOR
 		//===============================================================================================================
 		
-		c_ += t.material->getColor()*color(scene->getAmbientColor(),scene->getAmbientColor(),scene->getAmbientColor());
+		ka = t.material->getColor()*scene->getAmbientColor();
 		
 		//===============================================================================================================
-
-		//DIFFUSE COLOR
+		//ALl LIGHTS
 		//===============================================================================================================
-		
-		vec3 uSun = scene->getSun();
-		uSun.make_unit_vector();
+		for (int nLight = 0; nLight < scene->GetNofLights(); ++nLight)
+		{			
+			//===============================================================================================================
+			//DIFFUSE COLOR
+			//===============================================================================================================
+			vec3 uSun = scene->getSun(nLight, t.p);
+			uSun.make_unit_vector();
 
-		float angle = dot(uSun, t.normal);
+			float angle = dot(uSun, t.normal);
 
-		if (angle < 0) angle = 0;
+			if (angle < 0) angle = 0;
 
-		c_ += t.material->getColor()*(angle*scene->getSunColor());
+			kd = t.material->getColor()*(angle*scene->getSunColor(nLight, t.p));
 
-		//===============================================================================================================
+			//===============================================================================================================
+			//SPECULAR HIGHLIGHT
+			//===============================================================================================================
+			
+			//vec3 reflected = reflect(uSun, t.normal);
+			vec3 viewDir = r_.get_direction();
+			
+			auto h = (-r_.get_direction() + uSun);
+			h.make_unit_vector();
+			float specAngle = dot (t.normal, h);
+			//float specAngle = dot(reflected, viewDir);
 
+			
+			if(specAngle < 0) specAngle = 0;
+			//cout << specAngle << endl; 
 
-		//SPECULAR HIGHLIGHT
-		//===============================================================================================================
-		
-		vec3 reflected = uSun - (2*angle*t.normal);
-		vec3 viewDir = t.p - r_.get_origin();
+			float specular = pow(specAngle, t.material->getShininess());
 
-		float specAngle = dot(reflected, viewDir);
-		if(specAngle < 0) specAngle = 0;
+			//specular *= 0.8;
 
-		float specular = pow(specAngle, t.material->getShininess());
+			ks = specular*t.material->getSpecularColor()*scene->getSunIntensity(nLight);
+			
+			//todo -> uma esfera causa sombra na outra, mesmo que esteja entre a luz
+			// o1 <- l -> o2 (o1 causa sombra em o2 e vice e versa)
+			//===============================================================================================================
+			//SHADOW
+			//===============================================================================================================
+			HitRecord trash;
 
-		specular *= 0.8;
+			c_ += ka;
+			if(!scene->hit(Ray(t.p, uSun), min_depth, max_depth, trash)) 
+				c_ += kd + ks;
 
-		c_ += specular*vec3(1,1,1);
-		
-		//===============================================================================================================
+			
+			//===============================================================================================================
+		}
 
+		//if(dot(-r_.get_direction(), t.normal) < 0.2)
+		//	c_ *= 0;
 
-		if(c_.x() > 1) c_[color::R] = 1;
-		if(c_.y() > 1) c_[color::G] = 1;
-		if(c_.z() > 1) c_[color::B] = 1;
+		normalizeColor(c_);
+
 	}
 
 
@@ -71,11 +132,127 @@ Render::findColor(Ray & r_, color & c_)
 
 		c_ = azul * (y) + branco*(1-y);
 	}
+
+	return c_;
 }
 
-void 
-Render::normalColor(Ray & r_, color & c_)
+color 
+Render::toonShader(Ray & r_)
 {
+	color ka, kd, ks;
+	color c_, tmp;
+
+	auto x = (r_.get_direction() - r_.get_origin());
+
+	HitRecord t;
+
+	if(scene->hit(r_, min_depth, max_depth, t))
+	{
+
+		if(dot(-r_.get_direction(), t.normal) < border)
+			return color(0,0,0);		
+		//===============================================================================================================
+		//AMBIENT COLOR
+		//===============================================================================================================
+		
+		ka = t.material->getColor()*scene->getAmbientColor();
+		
+		//===============================================================================================================
+		//ALl LIGHTS
+		//===============================================================================================================
+		
+		for (int nLight = 0; nLight < scene->GetNofLights(); ++nLight)
+		{			
+			//===============================================================================================================
+			//DIFFUSE COLOR
+			//===============================================================================================================
+			vec3 uSun = scene->getSun(nLight, t.p);
+			uSun.make_unit_vector();
+
+			float angle = dot(uSun, t.normal);
+
+
+			if (angle < 0) angle = 0;
+
+			kd = t.material->getColor()*(scene->getSunColor(nLight, t.p));
+			for (int i = 0; i < angles.size(); ++i)
+			{
+				if(angle < angles[i])
+					kd *= intensities[i];
+			}
+
+			//===============================================================================================================
+			//SPECULAR HIGHLIGHT
+			//===============================================================================================================
+			
+			//vec3 reflected = reflect(uSun, t.normal);
+			vec3 viewDir = r_.get_direction();
+			
+			auto h = (-r_.get_direction() + uSun);
+			h.make_unit_vector();
+			float specAngle = dot (t.normal, h);
+			//float specAngle = dot(reflected, viewDir);
+
+			
+			if(specAngle < 0) specAngle = 0;
+			//cout << specAngle << endl; 
+
+			float specular = pow(specAngle, t.material->getShininess());
+
+			//specular *= 0.8;
+
+			if(specular >= 0.5)
+				ks = t.material->getColor()*1.1;
+			
+
+			//todo -> uma esfera causa sombra na outra, mesmo que esteja entre a luz
+			// o1 <- l -> o2 (o1 causa sombra em o2 e vice e versa)
+			//===============================================================================================================
+			//SHADOW
+			//===============================================================================================================
+			HitRecord trash;
+
+			//c_ += ka;
+			if(scene->hit(Ray(t.p, uSun), min_depth, max_depth, trash)) 
+					kd = t.material->getColor()*(scene->getSunColor(nLight, t.p))*intensities[intensities.size()-1];
+			c_ += kd + ks;
+
+			
+			//===============================================================================================================
+		}
+
+		//if(dot(-r_.get_direction(), t.normal) < 0.2)
+		//	c_ *= 0;
+
+		normalizeColor(c_);
+
+	}
+
+
+	else
+	{
+		x.make_unit_vector();
+
+		x = (x + vec3(1,1,1))/2;
+		auto y = x.y();
+
+		color branco(1,1,1);
+		color azul(0.5,0.7,1.0);
+
+
+		c_ = azul * (y) + branco*(1-y);
+	}
+
+	return c_;
+
+	return color(0,0,0);
+}
+
+color 
+Render::normalColor(Ray & r_)
+{
+	color c_;
+
 	auto x = (r_.get_direction() - r_.get_origin());
 
 	HitRecord t;
@@ -98,11 +275,15 @@ Render::normalColor(Ray & r_, color & c_)
 
 		c_ = azul * (y) + branco*(1-y);
 	}
+
+	return c_;
 }
 
-void 
-Render::depthColor(Ray & r_, color & c_)
+color 
+Render::depthColor(Ray & r_)
 {
+	color c_;
+
 	color depth_background (1,1,1);
 	color depth_foreground (0,0,0);
 	HitRecord t;
@@ -123,20 +304,21 @@ Render::depthColor(Ray & r_, color & c_)
 	}
 	else
 		c_ = depth_background;
+
+	return c_;
 }
 
 void
 Render::start(float col, float row, int index)
 {
 	color c;
-
-	bool antiAliasing = true;
+	color tmp;
 
 	std::random_device rd;
    	std::mt19937 gen(rd());
-	color finalColor(0,0,0);
+	
 	for (int i = 0; i < samples; ++i)
-	{
+	{		
 		auto u = (float(col) + std::generate_canonical<float,10>(gen)) / (image->getWidth()-1);
         auto v = (float(row) + std::generate_canonical<float,10>(gen)) / (image->getHeight()-1);
 
@@ -149,26 +331,29 @@ Render::start(float col, float row, int index)
 		{
 			//real color
 			case 0:
-				findColor(r, c);
+				c += findColor(r, 0);
 				break;
 			//normal color
 			case 1:
-				normalColor(r, c);
+				c += normalColor(r);
 				break;
 			//depth color
 			case 2:
-				depthColor(r, c);
-				break; 
+				c += depthColor(r);
+				break;
+			case 3:
+				c += blinnPhong(r);
+				break;
+			case 4:
+				c += toonShader(r);
+				break;
 		}
+		
+		c += tmp;
 
-		finalColor += c;
 	}
 
-	c = finalColor/samples;
-
-
-
-	
+	c /= samples;
 	
 	//Gamma correction
 	if(gamma)

@@ -3,38 +3,37 @@
 
 #include "sphere.h"
 #include "object.h"
+#include "light.h"
 
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 typedef float real_type;
 
 class Scene{
-	private:
-		vector<Object*> spheres;
-		vec3 sun;
-		color colorSun;
+	private:		
+		vector<std::shared_ptr<Object>> objects;
+		vector<std::shared_ptr<Light>> lights;
+
 		float ambientColor = 0.03;
 
 	public:
 		Scene() {}
-		~Scene()
-		 {
-			for(int i = 0; i < spheres.size(); i++)
-			{
-				delete spheres[i];
-			}
-		}
 
-		void addObject(Object* sphere) { spheres.push_back(sphere); };
+		void addObject(std::shared_ptr<Object> object) { objects.push_back(object); };
+		void addLight(std::shared_ptr<Light> light) { lights.push_back(light); };
+
 		bool hit(const Ray &ray, real_type t_min, real_type t_max, HitRecord &ht) const;
-		void setSun(vec3 v_, color c_) {sun = v_; colorSun = c_;};
 		void setAmbientColor(float c_) {ambientColor = c_/100;};
 
+		int GetNofLights() {return lights.size();};
+		vec3 getSun(int l_, point3 p_) {return lights[l_]->getNormal(p_);};
+		color getSunColor(int l_, point3 p_ = point3()) {return lights[l_]->getColor(p_);};
+		float getSunIntensity(int l_) {return lights[l_]->getIntensity();}
+
 		float getAmbientColor() {return ambientColor;};
-		vec3 getSun() {return sun;};
-		color getSunColor() {return colorSun;};
 
 };
 

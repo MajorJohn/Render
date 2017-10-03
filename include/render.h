@@ -36,10 +36,19 @@ class Render
 
 		bool gamma = false;
 
+		//TOON SHADER
+		float border = 0.2;
+		vector<float> angles;
+		vector<float> intensities;
+
+
+
 		// >>>>>>  FUNCTIONS  <<<<<<
-		void findColor(Ray & r_, color & c_);
-		void normalColor(Ray & r_, color & c_);
-		void depthColor(Ray & r_, color & c_);
+		color findColor(Ray & r_, int times);
+		color blinnPhong(Ray & r_);
+		color normalColor(Ray & r_);
+		color depthColor(Ray & r_);
+		color toonShader(Ray & r_);
 
 
 	public:
@@ -56,11 +65,13 @@ class Render
 		void setMaxDepth (float md_) {max_depth = md_;};
 		void setMinDepth (float md_) {min_depth = md_;};
 		void setAntiA(int s_) {samples = s_;};
-		void serGamma() {gamma = true;};
+		void setGamma() {gamma = true;};
+
+		//TOON SHADER SETS
+		void setBorder(float b_) {border = b_;};
+		void setGradient(float a_, float i_) {angles.push_back(a_); intensities.push_back(i_);}
 
 		void setImageName(string s_) {image->setName(s_);};
-		void setSun(vec3 v_, color c_) {scene->setSun(v_,c_);};
-
 
 		void setRender(Scene* s_, Image* i_, Camera* c_) 
 		{scene = s_; image = i_; camera = c_;};

@@ -2,7 +2,9 @@
 #define _OBJECT_H_
 
 #include "ray.h"
-#include "material.h"
+#include <memory>
+
+class Material;
 
 typedef float real_type;
 
@@ -11,7 +13,7 @@ struct HitRecord{
 	real_type t;
 	vec3 normal;
 	point3 p;
-	Material * material;
+	std::shared_ptr<Material> material;
 	bool negative = false;	
 };
 

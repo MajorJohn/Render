@@ -15,6 +15,7 @@ Animator::init(Render * render, int frame)
 	name += ".ppm";
 
 
+	int t = 1;
 	Scene* scene = new Scene();
     Image* image = new Image();
     Camera* camera = new Camera();
@@ -27,22 +28,23 @@ Animator::init(Render * render, int frame)
 	int imageType = 0;
 
 
-    //scene->addObject(new Sphere(point3( 0, 0, -1 ), 0.5, new Material(color (1,0.4,0))));
-    scene->addObject(new Sphere(point3( 0, -100.5, -1 ), 100, new Material(color (0.6,0.4,0.2), 2*frame)));
-    scene->addObject(new Sphere(point3( 0.5, 0, -1.4 ), 0.5, new Material(color (1,0,0.6))));
-    //scene->addObject(new Sphere(point3( -0.3, 0, -0.6 ), 0.4, new Material(color (0.4,0.2,0.8))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1.4 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
+    //scene->addObject(std::make_shared<Sphere>(point3( -0.3, 0, -0.6 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
 
-    scene->setSun(vec3 (-1,1,1), color(1,1,1));
+    scene->addLight(std::make_shared<GlobalLight>(vec3 (-1,1,1), color(1,1,1)));
 
-    image->setDimension(600, 300);
+    image->setDimension(600*t, 300*t);
     image->startBuffer();
-    image->setName(name);
 
     camera->setCamera(point3(-2, -1, -1), vec3(4, 0, 0), vec3(0, 2, 0), point3(0, 0, 0));
 
     render->setMaxDepth(1.5);
-    render->setMinDepth(0.0);
-    //render->setAntiA(10);
+    render->setMinDepth(0.001);
+    render->setAntiA(10);
+    render->setGamma();
 
     //>>>>>NON EDITABLES<<<<<
     render->setRender(scene, image, camera);

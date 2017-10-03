@@ -13,11 +13,13 @@
 #include "../include/render.h"
 #include "../include/material.h"
 #include "../include/animator.h"
+#include "../include/light.h"
 
 using namespace std;
 
 void init(Render* render)
 {
+	int t = 1;
 	Scene* scene = new Scene();
     Image* image = new Image();
     Camera* camera = new Camera();
@@ -26,26 +28,43 @@ void init(Render* render)
 
     // 0 = real Color 
 	// debug types
-	// 1 = normal color // 2 = depth color
-	int imageType = 0;
+	// 1 = normal color // 2 = depth color // 3 = Blinn Phong
+	// 4 = toon shader  //
+	int imageType = 3;
 
 
-    //scene->addObject(new Sphere(point3( 0, 0, -1 ), 0.5, new Material(color (1,0.4,0))));
-    //scene->addObject(new Sphere(point3( 0, -100.5, -1 ), 100, new Material(color (0.6,0.4,0.2), 8)));
-    scene->addObject(new Sphere(point3( 0.5, 0, -1.4 ), 0.5, new Material(color (1,0,0.6))));
-    //scene->addObject(new Sphere(point3( 0.2, 0, -0.9 ), 0.1, new Material(color (1,0.5,0.6)), true));
-    //scene->addObject(new Sphere(point3( -0.3, 0, -0.6 ), 0.4, new Material(color (0.4,0.2,0.8))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1.4 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
+    scene->addObject(std::make_shared<Sphere>(point3( -0.3, 0, -0.6 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
 
-    scene->setSun(vec3 (-1,1,1), color(1,1,1));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0, 1, -1 ), 0.2, std::make_shared<Lambertian>(color (1,0.4,0))));
 
-    image->setDimension(1200, 600);
+    //scene->addLight(std::make_shared<FadingLight>(vec3 (0,0.8,-0.5), color(1,1,1), 0.0));
+    //scene->addLight(std::make_shared<PointLight>(vec3 (0,0.8,-0.5), color(1,0.3,0), 0.5));
+    scene->addLight(std::make_shared<GlobalLight>(vec3 (-2,1,1), color(1,1,1)));
+    //scene->addLight(std::make_shared<GlobalLight>(vec3 (2,1,1), color(0,0,1)));
+
+    image->setDimension(600*t, 300*t);
     image->startBuffer();
 
     camera->setCamera(point3(-2, -1, -1), vec3(4, 0, 0), vec3(0, 2, 0), point3(0, 0, 0));
 
-    render->setMaxDepth(1.5);
-    render->setMinDepth(0.0);
+    render->setMaxDepth(1000);
+    render->setMinDepth(0.001);
     render->setAntiA(10);
+    render->setGamma();
+
+    //TOON SHADER
+    if (imageType == 4)
+    {
+    	render->setBorder(0.2);
+    	render->setGradient(0.25, 1.0);
+    	render->setGradient(0.1, 0.6);
+
+    	//scene->setAmbientColor(0.9);
+    }
 
     //>>>>>NON EDITABLES<<<<<
     render->setRender(scene, image, camera);
@@ -120,7 +139,7 @@ int main ()
 	gettimeofday(&tempo2, NULL);
 	finalTime = double((tempo2.tv_sec * 1000000 + tempo2.tv_usec) - (tempo1.tv_sec * 1000000 + tempo1.tv_usec))/1000000 ;
 
-	cout << ">>> Time spent: " << finalTime << "s \n";
+	cout << ">>> Time spent!: " << finalTime << "s \n";
 
 	delete render;
 

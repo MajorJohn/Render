@@ -9,13 +9,13 @@ Scene::hit(const Ray &ray, real_type t_min, real_type t_max, HitRecord &ht) cons
 	bool canNegative = false;
 
 
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; i < objects.size(); ++i)
 	{
-		if(spheres[i]->hit(ray, t_min, t_max, testeHt))
+		if(objects[i]->hit(ray, t_min, t_max, testeHt))
 		{
-			hitted = true;
-			if (testeHt.t < throne)
+			if (testeHt.t >= t_min && testeHt.t < throne)
 			{
+				hitted = true;
 				throne = testeHt.t;
 				ht = testeHt;
 			}

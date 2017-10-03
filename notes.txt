@@ -1,0 +1,31 @@
+notes:
+
+camera (point3 origem, vec3 gaze, vec3 Vup):
+
+gaze = LookFrom - LookAt
+
+		origem = lookfrom;
+
+
+	gaze = - gaze (pois é passado o vetor pra onde ele quer ver)
+
+	w -> ||gaze||
+	u -> Vup X w
+	v -> v X w
+
+ex: lookfrom( -1, 4, 4)
+	lookat(0,0,-1)
+
+
+ORTOGONAL
+ViewPlane (vec3 normal = -w, vec3 llc, vec3 horizontal, vec3 vertical)
+
+||
+PESPECTIVA
+ViewPlane (float vfoc(angle, float aspect = 16/9, float df(distancia focal), vec3 normal))
+
+
+out:
+llc
+horizontal_axis
+vertical_axis

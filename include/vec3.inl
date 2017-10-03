@@ -187,4 +187,42 @@ inline vec3 unit_vector( const vec3 & v )
     return v/v.length();
 }
 
+//rand a point inside a sphere (r = 1)
+inline vec3 random_in_unit_sphere()
+{
+    vec3 p;
+
+    do {
+        p = 2.0*vec3(drand48(), drand48(), drand48()) - vec3(1,1,1);
+    } while (dot(p,p) >= 1.0);
+
+    return p;
+}
+
+//return a v reflect by normal n (both need to be unit vec)
+inline vec3 reflect (const vec3 & v, const vec3 & n) 
+{
+    return v - 2*dot(v,n)*n;
+}
+
+//normalize the vector. If it is with any space greater than 1, turn its to 1
+inline void normalizeColor(color & c_)
+{
+    if(c_.x() > 1) c_[color::R] = 1;
+    if(c_.y() > 1) c_[color::G] = 1;
+    if(c_.z() > 1) c_[color::B] = 1;
+}
+
+//distance between two points
+inline float distance(point3 p1_, point3 p2_)
+{
+    float a, b, c;
+
+    a = p1_.x() - p2_.x();
+    b = p1_.y() - p2_.y();
+    c = p1_.z() - p2_.z();
+
+    return sqrt(a*a + b*b + c*c);
+}
+
 //==============================[ vec3.inl ]==============================//
