@@ -199,6 +199,18 @@ inline vec3 random_in_unit_sphere()
     return p;
 }
 
+//rand a point inside a disc (r = 1)
+inline vec3 random_in_unit_disc()
+{
+    vec3 p;
+
+    do {
+        p = 2.0*vec3(drand48(), drand48(), 0) - vec3(1,1,0);
+    } while (dot(p,p) >= 1.0);
+
+    return p;
+}
+
 //return a v reflect by normal n (both need to be unit vec)
 inline vec3 reflect (const vec3 & v, const vec3 & n) 
 {

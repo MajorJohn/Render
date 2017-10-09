@@ -1,34 +1,42 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
+#include <memory>
+
 #include "vec3.h"
+#include "viewplane.h"
+#include "ray.h"
 
 class Camera
 {
 	private:
-		point3 lower_left_corner;
-		vec3 horizontal;
-		vec3 vertical;
+
 		point3 origin;
+
+		point3 u = point3(1,0,0);
+		point3 v = point3(0,1,0);
+		point3 w = point3(0,0,1);
+
+		bool pespective = true;
+
+		float blur;
+
+		std::shared_ptr<ViewPlane> vp;
 
 	public:
 
-		Camera (point3 llc_ = point3(-2,-1,-1), vec3 h_ = vec3(4,0,0), vec3 v_ = vec3(0,2,0), point3 o_ = point3(0,0,0))
-		: lower_left_corner(llc_), horizontal(h_), vertical(v_), origin(o_) {}
+		Camera (point3 o_ = point3(0,0,0))
+		: origin(o_) {}
 
-		void setLlc(point3 llc_) {lower_left_corner = llc_;};
-		void setHorizon (vec3 h_) {horizontal = h_;};
-		void setVert (vec3 v_) {vertical = v_;};
-		void setOrigin (point3 o_) {origin = o_;};
+		Ray getRay(float u_, float v_);
 
-		point3 getLlc() {return lower_left_corner;};
-		vec3 getHorizon() {return horizontal;};
-		vec3 getVert() {return vertical;};
-		point3 getOrigin() {return origin;};
+		//dimensions ex.: 16:9 // disntace from the camera
+		void setVP(float h_,float v_, float d_);
 
-		void setCamera(point3 llc_, vec3 h_, vec3 v_, point3 o_)
-		{lower_left_corner = llc_; horizontal = h_;
-		 vertical = v_; origin = o_;};
+		void setPespective(float b_ = 0) {pespective = true; blur = b_;};
+		void setOrtogonal() {pespective = false;};
+
+		void setCamera(point3 o_, point3 lookAt, vec3 vUp);
 
 };
 

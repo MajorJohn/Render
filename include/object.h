@@ -5,6 +5,7 @@
 #include <memory>
 
 class Material;
+class Light;
 
 typedef float real_type;
 

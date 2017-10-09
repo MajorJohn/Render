@@ -39,8 +39,9 @@ Animator::init(Render * render, int frame)
     image->setDimension(600*t, 300*t);
     image->startBuffer();
 
-    camera->setCamera(point3(-2, -1, -1), vec3(4, 0, 0), vec3(0, 2, 0), point3(0, 0, 0));
-
+    camera->setCamera(point3(0, 2, 0), point3(0.5,0,-1.4), vec3(0,1,0));
+    camera->setVP(4, 2, 1);
+    
     render->setMaxDepth(1.5);
     render->setMinDepth(0.001);
     render->setAntiA(10);

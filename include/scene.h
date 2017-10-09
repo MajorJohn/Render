@@ -32,6 +32,8 @@ class Scene{
 		vec3 getSun(int l_, point3 p_) {return lights[l_]->getNormal(p_);};
 		color getSunColor(int l_, point3 p_ = point3()) {return lights[l_]->getColor(p_);};
 		float getSunIntensity(int l_) {return lights[l_]->getIntensity();}
+		bool shadow(HitRecord t_, float dist, int l_) {return lights[l_]->shadow(t_, dist);};
+		bool shadow(HitRecord t_, int l_) {return lights[l_]->shadow(t_);};
 
 		float getAmbientColor() {return ambientColor;};
 

@@ -17,6 +17,10 @@ class Light
 
 		virtual color getColor(point3 p_ = point3()) {return this->cor*this->intensity;};
 
+		virtual bool shadow(HitRecord t_, float dist) = 0;
+
+		virtual bool shadow(HitRecord t_) = 0;
+
 		float getIntensity() {return intensity;};
 };
 
@@ -28,6 +32,9 @@ class GlobalLight : public Light
 		{ this->light = l_; this->cor = c_; this->intensity = i_; }
 
 		vec3 getNormal(point3 p_) {return this->light;};
+
+		bool shadow(HitRecord t_, float dist) {return true;};
+		bool shadow(HitRecord t_) {return false;};
 };
 
 class PointLight : public Light
@@ -37,28 +44,49 @@ class PointLight : public Light
 		{ this->light = l_; this->cor = c_; this->intensity = i_; }
 
 		vec3 getNormal(point3 p_) {return (this->light - p_);};
+
+		bool shadow(HitRecord t_, float dist) 
+		{if(distance(t_.p, light) < dist) return false;
+		 return true;};
+		bool shadow(HitRecord t_) {return false;};
+
 };
 
-class FadingLight : public Light
+class SpotLight : public Light
 {
 	private:
-		float kFading;
+		vec3 dir;
+		float angle;
 	public:
-		FadingLight(vec3 l_, color c_ = color(1,1,1), float kF_ = 0.0, float i_ = 1.0)
-		{ this->light = l_; this->cor = c_; this->kFading = kF_; this->intensity = i_; }
+		SpotLight(vec3 l_, color c_ = color(1,1,1), vec3 d_ = vec3 (0,-1,0), float a_ = -1, float i_ = 1.0)
+		{ this->light = l_; this->cor = c_; dir = d_; dir.make_unit_vector();
+		angle = a_; this->intensity = i_;}
 
 		vec3 getNormal(point3 p_) {return (this->light - p_);};
 
-		// todo ->  colocar o fading no render e a equação é 1/d*d
-		color getColor(point3 p_) 
+		bool shadow(HitRecord t_, float dist) 
 		{
-			float d = distance(p_, this->light);
-			if( d >= kFading )
-				return this->cor*(this->intensity*(1 - kFading/d));
-			else return this->cor*0;
+			if(distance(t_.p, light) < dist)
+			{
+				vec3 ld =  light - t_.p;
+				ld.make_unit_vector();
+				if(dot(ld, -dir) > angle)
+					return false;
+			}
+		 	return true;
+		};
+		bool shadow(HitRecord t_)
+		{
+			vec3 ld = light - t_.p;
+			ld.make_unit_vector();
+			if(dot(ld, -dir) > angle)
+					return false;
+			return true;
 		};
 
 };
+
+//Fading light
 
 
 #endif
