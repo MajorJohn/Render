@@ -11,43 +11,105 @@ Animator::init(Render * render, int frame)
 
 	string name = "anim_";
 
+	if (frame < 10)
+		name += "00";
+	else if(frame < 100)
+		name += "0";
+
 	name += ss.str();
 	name += ".ppm";
 
 
-	int t = 1;
+	//screen resolution
+// t -> amount of pixels
+// h:v -> resolution proportion
+//================================
+	int t = 150;
+	int h = 4;
+	int v = 2;
+//================================
+
+
 	Scene* scene = new Scene();
     Image* image = new Image();
     Camera* camera = new Camera();
 
-    //>>>>> EDITABLES <<<<<
+//>>>>> EDITABLES <<<<<
 
-    // 0 = real Color 
-	// debug types
-	// 1 = normal color // 2 = depth color
-	int imageType = 0;
+// 0 = real Color 
+// debug types
+// 1 = normal color // 2 = depth color // 3 = Blinn Phong
+// 4 = toon shader  //
+	int imageType = 3;
 
-
-    scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
-    scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
+//ADD OBJECTS
+//====================================================================================================================================
+    //scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1.4 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
-    //scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( -0.3, 0, -0.6 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
+    scene->addObject(std::make_shared<Sphere>(point3( -1, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
+    scene->addObject(std::make_shared<Sphere>(point3( 2, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
+	//scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
 
-    scene->addLight(std::make_shared<GlobalLight>(vec3 (-1,1,1), color(1,1,1)));
+    //scene->addObject(std::make_shared<Sphere>(point3( 0, 1, -1 ), 0.2, std::make_shared<Lambertian>(color (1,0.4,0))));
+//====================================================================================================================================
 
-    image->setDimension(600*t, 300*t);
+//ADD LIGHTS
+//====================================================================================================================================
+    scene->addLight(std::make_shared<SpotLight>(vec3 ( 0.5, 0, -1), color(1,1,1),vec3 (1.5,-1,0),1.0 - (2.0*(float)frame/63.0)));
+    //scene->addLight(std::make_shared<PointLight>(vec3 ( 0.5, 0, -1 ), color(1,1,1), 0.5));
+    //scene->addLight(std::make_shared<GlobalLight>(vec3 (-2,1,1), color(1,1,1)));
+    //scene->addLight(std::make_shared<GlobalLight>(vec3 (2,1,1), color(0,0,1)));
+//====================================================================================================================================
+
+
+    image->setDimension(h*t, v*t);
     image->startBuffer();
+    image->setName(name);
 
-    camera->setCamera(point3(0, 2, 0), point3(0.5,0,-1.4), vec3(0,1,0));
-    camera->setVP(4, 2, 1);
-    
-    render->setMaxDepth(1.5);
-    render->setMinDepth(0.001);
-    render->setAntiA(10);
+//CAMERA
+//================================================================================
+    float distance = 10;
+    point3 cameraOrigin(0,40, 40);
+    point3 lookAt(0.5, 0, -1);
+    vec3 vUp(0,1,0);
+    float blur = 0.0;
+//--------------------------------------------------------------------------------
+    camera->setPespective(blur);
+    //camera->setOrtogonal();
+    camera->setCamera(cameraOrigin, lookAt, vUp);
+    camera->setVP(h, v, distance);
+//================================================================================
+
+
+//RENDER
+//================================================================================
+    int samples = 10;
+    float maxDepth = 1000;
+    float minDepth = 0.001;
+//-------------------------------------------------------------------------------- 
+    render->setMaxDepth(maxDepth);
+    render->setMinDepth(minDepth);
+    render->setAntiA(samples);
     render->setGamma();
+//================================================================================
 
-    //>>>>>NON EDITABLES<<<<<
+//TOON SHADER
+//================================================================================
+ 	float borderSize = 0.2;
+//-------------------------------------------------------------------------------- 
+    if (imageType == 4)
+    {
+    	render->setBorder(borderSize);
+    	render->setGradient(0.25, 1.0);
+    	render->setGradient(0.1, 0.6);
+    	//scene->setAmbientColor(0.9);
+    }
+//================================================================================
+
+//>>>>>NON EDITABLES<<<<<
     render->setRender(scene, image, camera);
     render->setImageType(imageType);
 }
