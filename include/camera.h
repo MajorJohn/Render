@@ -20,6 +20,7 @@ class Camera
 		bool pespective = true;
 
 		float blur;
+		float focalD;
 
 		std::shared_ptr<ViewPlane> vp;
 
@@ -33,7 +34,7 @@ class Camera
 		//dimensions ex.: 16:9 // disntace from the camera
 		void setVP(float h_,float v_, float d_);
 
-		void setPespective(float b_ = 0) {pespective = true; blur = b_;};
+		void setPespective(float b_ = 0, float d_ = 1.0) {pespective = true; blur = b_; focalD = d_;};
 		void setOrtogonal() {pespective = false;};
 
 		void setCamera(point3 o_, point3 lookAt, vec3 vUp);

@@ -1,2 +1,50 @@
-create movie:
-convert -delay 6 anim_*.ppm anim.mp4
+==========================================================
+                        How to do
+==========================================================
+
+----------------------------------------------------------
+	create video:
+	convert -delay 6 anim_*.ppm anim.mp4
+----------------------------------------------------------
+__________________________________________________________
+
+==========================================================
+                         Unidade 2
+==========================================================
+
+	- Transformação
+	- Aceleração
+		* Kd-tree, octree, bsp
+		* Hierarchical bounding boxes
+		* Multi-threads
+	- Area Light (soft shadows)
+	- Malha de triângulos
+__________________________________________________________
+
+==========================================================
+                           todo
+==========================================================
+
+	Arrumar foco da camera pespctiva
+
+	arrumar toon shader
+	
+	Criar classe malha de triangulos
+
+	criar funções que retornam o centro de cada objeto
+	(na malha é o centro da malha(centro de um cubo))
+
+	criar formulas de transformação:
+		- transladar
+		- rotacionar
+__________________________________________________________
+
+terminal: gnuplot
+
+plot "points.dat" u 1:2:3 w linesp
+set xrange [-4:8]
+set yrange [-4:8]
+set replot
+quit
+
+>>> estudar glm e gnuplot

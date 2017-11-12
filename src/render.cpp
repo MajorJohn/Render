@@ -82,7 +82,7 @@ Render::blinnPhong(Ray & r_)
 			//vec3 reflected = reflect(uSun, t.normal);
 			vec3 viewDir = r_.get_direction();
 			
-			auto h = (-r_.get_direction() + uSun);
+			auto h = (-viewDir + uSun);
 			h.make_unit_vector();
 			float specAngle = dot (t.normal, h);
 			//float specAngle = dot(reflected, viewDir);
@@ -96,6 +96,7 @@ Render::blinnPhong(Ray & r_)
 			//specular *= 0.8;
 
 			ks = specular*t.material->getSpecularColor()*scene->getSunIntensity(nLight);
+			ks= 0;
 //===============================================================================================================
 			
 //===============================================================================================================

@@ -44,11 +44,11 @@ Animator::init(Render * render, int frame)
 
 //ADD OBJECTS
 //====================================================================================================================================
-    //scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
-    //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1.4 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
-    //scene->addObject(std::make_shared<Sphere>(point3( -0.3, 0, -0.6 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
-    scene->addObject(std::make_shared<Sphere>(point3( -1, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
-    scene->addObject(std::make_shared<Sphere>(point3( 2, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
+    scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1.4 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
+    scene->addObject(std::make_shared<Sphere>(point3( -0.3, 0, -0.6 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
+    //scene->addObject(std::make_shared<Sphere>(point3( -1, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0))));
+    //scene->addObject(std::make_shared<Sphere>(point3( 2, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
     scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
 	//scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
@@ -58,9 +58,9 @@ Animator::init(Render * render, int frame)
 
 //ADD LIGHTS
 //====================================================================================================================================
-    scene->addLight(std::make_shared<SpotLight>(vec3 ( 0.5, 0, -1), color(1,1,1),vec3 (1.5,-1,0),1.0 - (2.0*(float)frame/63.0)));
+    //scene->addLight(std::make_shared<SpotLight>(vec3 ( 0.5, 0, -1), color(1,1,1),vec3 (1.5,-1,0),1.0 - (2.0*(float)frame/63.0)));
     //scene->addLight(std::make_shared<PointLight>(vec3 ( 0.5, 0, -1 ), color(1,1,1), 0.5));
-    //scene->addLight(std::make_shared<GlobalLight>(vec3 (-2,1,1), color(1,1,1)));
+    scene->addLight(std::make_shared<GlobalLight>(vec3 (-2,1,1), color(1,1,1)));
     //scene->addLight(std::make_shared<GlobalLight>(vec3 (2,1,1), color(0,0,1)));
 //====================================================================================================================================
 
@@ -71,13 +71,14 @@ Animator::init(Render * render, int frame)
 
 //CAMERA
 //================================================================================
-    float distance = 10;
-    point3 cameraOrigin(0,40, 40);
-    point3 lookAt(0.5, 0, -1);
+    float distance = 1;
+    point3 cameraOrigin(0,0,0);
+    point3 lookAt(0, 0, -1);
     vec3 vUp(0,1,0);
     float blur = 0.0;
+    float dFocal = 0.2*(frame+1);
 //--------------------------------------------------------------------------------
-    camera->setPespective(blur);
+    camera->setPespective(blur, dFocal);
     //camera->setOrtogonal();
     camera->setCamera(cameraOrigin, lookAt, vUp);
     camera->setVP(h, v, distance);

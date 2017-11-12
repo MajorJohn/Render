@@ -25,6 +25,8 @@ class Object{
 	public:
 		virtual ~Object() {}
 		virtual bool hit(const Ray &ray,real_type t_min,real_type t_max, HitRecord &ht) const = 0;
+		virtual void transform(double rotate[3], float scale, point3 translation) = 0;
+		virtual void endTransform() = 0;
 };
 
 #endif

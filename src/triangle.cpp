@@ -37,9 +37,11 @@ Triangle::hit(const Ray &ray, float t_min, float t_max, HitRecord &hr) const
 
 		if(t > t_max || t < t_min)
 			return false;
-		
+
 		u *= iDet;
 		v *= iDet;
+
+		hr.normal = normal;
 	}
 	else
 	{
@@ -60,12 +62,36 @@ Triangle::hit(const Ray &ray, float t_min, float t_max, HitRecord &hr) const
 		t = dot(E2,Q) * iDet; 
 		if(t > t_max || t < t_min)
 			return false;
+		
+		hr.normal = -normal;
 	}
 
 	hr.t = t;
 	hr.p = ray.point_at(t);
-	hr.normal = normal;
 	hr.material = material;
 
 	return true;
+}
+
+void 
+Triangle::transform(double rotate[3], float scale, point3 translation)
+{
+	trans.rotate(rotate[0],rotate[1],rotate[2]);
+	
+	trans.scale(scale);
+	
+	trans.translation(translation);
+}
+
+void 
+Triangle::endTransform()
+{
+	trans.transform(p0);
+	trans.transform(p1);
+	trans.transform(p2);
+
+	E1 = p1 - p0;
+	E2 = p2 - p0;
+	normal = cross(E1, E2);
+	center = (p0 + p1 + p2)/3;
 }

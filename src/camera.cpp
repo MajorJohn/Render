@@ -4,21 +4,44 @@ void
 Camera::setVP(float h_,float v_, float d_)
 {
 	point3 o;
+	vec3 hor;
+	vec3 vert;
+	point3 llc;
+	vec3 normal;
+
 	// origin + d*w (d == 0)
-	if(pespective)
-		o = origin + d_*-w;
-	else
+	if(pespective){
+		float proporcion;
+
+		o = origin + focalD*-w;
+
+		proporcion = focalD/d_;
+		//vertical & horizontal
+		hor = u*h_;
+		vert = (-v)*v_;
+
+		hor *= proporcion;
+		vert *= proporcion;
+
+		//LLC
+		llc = o - (hor/2) - (vert/2);
+
+		//normal
+		normal = -w;
+	}
+	else{
 		o = origin;
 
-	//vertical & horizontal
-	vec3 hor = u*h_;
-	vec3 vert = (-v)*v_;
+		//vertical & horizontal
+		hor = u*h_;
+		vert = (-v)*v_;
 
-	//LLC
-	point3 llc = o - (hor/2) - (vert/2);
+		//LLC
+		llc = o - (hor/2) - (vert/2);
 
-	//normal
-	vec3 normal = -w;
+		//normal
+		normal = -w;
+	}
 
 	//new viewplane
 	vp = std::make_shared<ViewPlane>(llc,vert,hor,normal);
@@ -28,7 +51,9 @@ Ray
 Camera::getRay(float u_, float v_)
 {
 	if(pespective){
-		point3 o = origin + blur*random_in_unit_disc();
+
+		vec3 rand = blur*random_in_unit_disc();
+		point3 o = origin + u*rand + v*rand;
 
 		vec3 ray_dir ((vp->getLlc() + u_*vp->getHorizontal() + v_*vp->getVertical()) - o);
 
