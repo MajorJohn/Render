@@ -50,7 +50,7 @@ Triangle::hit(const Ray &ray, float t_min, float t_max, HitRecord &hr) const
 
 		float iDet = 1/det;
 		u = dot(T,P)*iDet;
-		if(u  < 0.0 || u > 1)
+		if(u  < 0.0 || u > 1.0)
 			return false;
 		
 		vec3 Q = cross(T, E1);
@@ -62,10 +62,13 @@ Triangle::hit(const Ray &ray, float t_min, float t_max, HitRecord &hr) const
 		t = dot(E2,Q) * iDet; 
 		if(t > t_max || t < t_min)
 			return false;
-		
-		hr.normal = -normal;
+		if(det > 0)
+			hr.normal = normal;
+		else
+			hr.normal = -normal;
 	}
 
+	hr.normal.make_unit_vector();
 	hr.t = t;
 	hr.p = ray.point_at(t);
 	hr.material = material;

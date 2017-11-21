@@ -25,26 +25,13 @@ __________________________________________________________
                            todo
 ==========================================================
 
-	Arrumar foco da camera pespctiva
+	colocar no cout, quanto tempo passou e quanto tempo
+	falta
 
 	arrumar toon shader
 	
-	Criar classe malha de triangulos
+	Criar classe malha de triangulos || .off | .obj ||
 
 	criar funções que retornam o centro de cada objeto
 	(na malha é o centro da malha(centro de um cubo))
-
-	criar formulas de transformação:
-		- transladar
-		- rotacionar
 __________________________________________________________
-
-terminal: gnuplot
-
-plot "points.dat" u 1:2:3 w linesp
-set xrange [-4:8]
-set yrange [-4:8]
-set replot
-quit
-
->>> estudar glm e gnuplot

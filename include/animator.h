@@ -2,6 +2,7 @@
 #define _ANIMATOR_H_
 
 #include "render.h"
+#include "triangle.h"
 
 class Animator
 {

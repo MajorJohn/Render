@@ -1,6 +1,8 @@
 #ifndef _TRIANGLE_H_
 #define _TRIANGLE_H_
 
+#include <iostream>
+
 #include "object.h"
 #include "material.h"
 #include "transform.h"
@@ -16,7 +18,7 @@ class Triangle: public Object{
 		vec3 E2;
 		vec3 normal;
 		std::shared_ptr<Material> material;
-		bool culling = true;
+		bool culling;
 
 		Transform trans;
 		point3 center;

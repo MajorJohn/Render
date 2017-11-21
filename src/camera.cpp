@@ -57,6 +57,8 @@ Camera::getRay(float u_, float v_)
 
 		vec3 ray_dir ((vp->getLlc() + u_*vp->getHorizontal() + v_*vp->getVertical()) - o);
 
+		ray_dir.make_unit_vector();
+
 		Ray r( o , ray_dir);
 		return r;
 	}
@@ -66,6 +68,8 @@ Camera::getRay(float u_, float v_)
 
 		point3 o = (vp->getLlc() + u_*vp->getHorizontal() + v_*vp->getVertical());
 
+		ray_dir.make_unit_vector();
+		
 		Ray r( o , ray_dir);
 		return r;
 	}
