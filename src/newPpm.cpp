@@ -6,6 +6,7 @@
 
 #include "../include/vec3.h"
 #include "../include/ray.h"
+#include "../include/texture.h"
 #include "../include/sphere.h"
 #include "../include/triangle.h"
 #include "../include/scene.h"
@@ -51,7 +52,15 @@ std::shared_ptr<Triangle> t4;
 std::shared_ptr<Triangle> floor1;
 std::shared_ptr<Triangle> floor2;
 
+std:: shared_ptr<Sphere> s1;
+
 std::shared_ptr<Surface> floor;
+
+std::shared_ptr<Texture> mate;
+
+s1 = std::make_shared<Sphere>(point3( 0, 2, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0)));
+
+mate = std::make_shared<Checker_texture>();
 
 point3 p0(0,1,0);
 point3 p1(-1,0,1);
@@ -59,8 +68,8 @@ point3 p2(1,0,1);
 
 floor = std::make_shared<Surface> ();
 
-floor1 = std::make_shared<Triangle> (point3( 10, 0, 10 ), point3( -10, 0, -10 ), point3( -10, 0, 10 ), std::make_shared<Lambertian>(color (0.52,0.34,0.07))); 
-floor2 = std::make_shared<Triangle> (point3( 10, 0, 10 ), point3( 10, 0, -10 ), point3( -10, 0, -10 ), std::make_shared<Lambertian>(color (0.52,0.34,0.07))); 
+floor1 = std::make_shared<Triangle> (point3( 10, 0.1, 10 ), point3( -10, 0.1, -10 ), point3( -10, 0.1, 10 ), std::make_shared<Lambertian>(color (0.52,0.34,0.07))); 
+floor2 = std::make_shared<Triangle> (point3( 10, 0.1, 10 ), point3( 10, 0.1, -10 ), point3( -10, 0.1, -10 ), std::make_shared<Lambertian>(color (0.52,0.34,0.07))); 
 
 t1 = std::make_shared<Triangle> (p0, p1, p2, std::make_shared<Lambertian>(color (1,0,0)));
 t2 = std::make_shared<Triangle> (p0, p1, p2, std::make_shared<Lambertian>(color (0,1,0))); 
@@ -70,22 +79,32 @@ t4 = std::make_shared<Triangle> (p0, p1, p2, std::make_shared<Lambertian>(color 
 double rot[3];
 rot[0] = 0.0;
 rot[1] = 0.0;
-rot[2] = 45.0;
+rot[2] = 0.0;
 
-floor->transform(rot, 2);
+floor->transform(rot, 1, point3(0,1,0));
 floor->endTransform();
-//t2->setReferP(p0);
-t2->transform(rot, 2, point3(3, 1, 0));
-t2->endTransform();
-//rot[1] = 180.0;
-//t3->setReferP(p0);
-t3->transform(rot, 0.7, point3(-2, 1, 0));
-t3->endTransform();
-rot[2] = 45.0;
-//t4->setReferP(p0);
-t4->transform(rot, 0.7, point3(-2, 3, 0));
-t4->endTransform();
+floor->setTexture(mate);
+s1->setTexture(mate);
 
+floor1->setTexture(mate);
+floor2->setTexture(mate); 
+
+t1->setTexture(mate);
+rot[1] = 90;
+t2->setReferP(p0);
+t2->transform(rot);
+t2->endTransform();
+t2->setTexture(mate);
+rot[1] = 180.0;
+t3->setReferP(p0);
+t3->transform(rot);
+t3->endTransform();
+t3->setTexture(mate);
+rot[1] = 270.0;
+t4->setReferP(p0);
+t4->transform(rot);
+t4->endTransform();
+t4->setTexture(mate);
 
 //ADD OBJECTS
 //====================================================================================================================================
@@ -96,13 +115,14 @@ t4->endTransform();
     //scene->addObject(std::make_shared<Sphere>(point3( 2, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
-    //scene->addObject(t1);
-    //scene->addObject(t2);
-    //scene->addObject(t3);
-    //scene->addObject(t4);
-    //scene->addObject(floor1);
-    //scene->addObject(floor2);
-	scene->addObject(floor);
+    scene->addObject(t1);
+    scene->addObject(t2);
+    scene->addObject(t3);
+    scene->addObject(t4);
+    scene->addObject(floor1);
+    scene->addObject(floor2);
+	//scene->addObject(floor);
+	//scene->addObject(s1);
 	//scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0, 1, -1 ), 0.2, std::make_shared<Lambertian>(color (1,0.4,0))));
     //scene->addObject(std::make_shared<Triangle>(point3( 1, 0.5, -1 ), point3( 0.5, 1, -1 ), point3( 0, 0.5, -1 ), std::make_shared<Lambertian>(color (0.6,0.4,0.2))));

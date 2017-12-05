@@ -5,7 +5,6 @@
 
 #include "object.h"
 #include "material.h"
-#include "transform.h"
 
 class Triangle: public Object{
 	typedef float real_type;
@@ -35,6 +34,7 @@ class Triangle: public Object{
 		void endTransform();
 
 		void setReferP(point3 p_) {trans.setReferP(p_);};
+		void setTexture(std::shared_ptr<Texture> t_) {material->setTexture(t_);};
 };
 
 #endif

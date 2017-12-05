@@ -54,7 +54,7 @@ Render::blinnPhong(Ray & r_)
 //===============================================================================================================
 //AMBIENT COLOR
 //===============================================================================================================
-		ka = t.material->getColor()*scene->getAmbientColor();
+		ka = t.material->getColor(t.p)*scene->getAmbientColor();
 //===============================================================================================================
 
 //===============================================================================================================
@@ -72,7 +72,7 @@ Render::blinnPhong(Ray & r_)
 
 			if (angle < 0) angle = 0;
 
-			kd = t.material->getColor()*(angle*scene->getSunColor(nLight, t.p));
+			kd = t.material->getColor(t.p)*(angle*scene->getSunColor(nLight, t.p));
 //===============================================================================================================
 
 //===============================================================================================================
@@ -159,7 +159,7 @@ Render::toonShader(Ray & r_)
 		//AMBIENT COLOR
 		//===============================================================================================================
 		
-		ka = t.material->getColor()*scene->getAmbientColor();
+		ka = t.material->getColor(t.p)*scene->getAmbientColor();
 		
 		//===============================================================================================================
 		//ALl LIGHTS
@@ -178,7 +178,7 @@ Render::toonShader(Ray & r_)
 
 			if (angle < 0) angle = 0;
 
-			kd = t.material->getColor()*(scene->getSunColor(nLight, t.p));
+			kd = t.material->getColor(t.p)*(scene->getSunColor(nLight, t.p));
 			for (int i = 0; i < angles.size(); ++i)
 			{
 				if(angle < angles[i])
@@ -206,7 +206,7 @@ Render::toonShader(Ray & r_)
 			//specular *= 0.8;
 
 			if(specular >= 0.5)
-				ks = t.material->getColor()*1.1;
+				ks = t.material->getColor(t.p)*1.1;
 			
 
 			//todo -> uma esfera causa sombra na outra, mesmo que esteja entre a luz
@@ -218,7 +218,7 @@ Render::toonShader(Ray & r_)
 
 			//c_ += ka;
 			if(scene->hit(Ray(t.p, uSun), min_depth, max_depth, trash)) 
-					kd = t.material->getColor()*(scene->getSunColor(nLight, t.p))*intensities[intensities.size()-1];
+					kd = t.material->getColor(t.p)*(scene->getSunColor(nLight, t.p))*intensities[intensities.size()-1];
 			c_ += kd + ks;
 
 			

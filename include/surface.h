@@ -4,9 +4,8 @@
 #include <iostream>
 
 #include "object.h"
-#include "material.h"
 #include "triangle.h"
-#include "transform.h"
+#include "material.h"
 
 
 class Surface: public Object{
@@ -31,6 +30,7 @@ class Surface: public Object{
 		void endTransform();
 
 		void setReferP(point3 p_) {t1->setReferP(p_);t2->setReferP(p_);};
+		void setTexture(std::shared_ptr<Texture> t_) {material->setTexture(t_);};
 };
 
 #endif

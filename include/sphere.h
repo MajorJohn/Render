@@ -24,6 +24,7 @@ class Sphere: public Object{
 		bool hit(const Ray &ray, float t_min, float t_max, HitRecord &hr) const;
 		void transform(double rotate[3], float scale, point3 translation) {};
 		void endTransform() {};
+		void setTexture(std::shared_ptr<Texture> t_) {material->setTexture(t_);};
 };
 
 #endif
