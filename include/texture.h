@@ -17,7 +17,7 @@ class Constant_texture : public Texture
 	public:
 		color rgb;
 
-		Constant_texture() {}
+		//Constant_texture() {}
 		Constant_texture(color c = color()) : rgb(c) {}
 
 		virtual color value(const vec3 & p = vec3(), float u = 0, float v = 0) const 

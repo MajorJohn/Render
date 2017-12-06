@@ -55,6 +55,8 @@ Render::blinnPhong(Ray & r_)
 //AMBIENT COLOR
 //===============================================================================================================
 		ka = t.material->getColor(t.p)*scene->getAmbientColor();
+
+		c_ += ka;
 //===============================================================================================================
 
 //===============================================================================================================
@@ -104,12 +106,13 @@ Render::blinnPhong(Ray & r_)
 //===============================================================================================================
 			HitRecord trash;
 
-			c_ += ka;
 			//if doenst hit anything in the direction of the light
 			if(!scene->hit(Ray(t.p, uSun), min_depth, max_depth, trash))
 			{
 				if(!scene->shadow(t, nLight))
+				{
 					c_ += kd + ks;
+				}
 			}
 			//if it isnt a global light
 			//and one object is doing a wrong shadow (ex. case: o1 <- l -> o2, shadow form o1 to o2 and vice-versa)

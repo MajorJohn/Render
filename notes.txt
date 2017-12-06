@@ -9,16 +9,26 @@
 __________________________________________________________
 
 ==========================================================
-                         Unidade 2
+                         Unidade 3
 ==========================================================
 
-	- Transformação
-	- Aceleração
-		* Kd-tree, octree, bsp
-		* Hierarchical bounding boxes
-		* Multi-threads
-	- Area Light (soft shadows)
-	- Malha de triângulos
+	- Malha
+		* Malha
+		* Aceleração
+			* Kd-tree, octree, bsp
+			* Hierarchical bounding boxes
+			* Multi-threads
+	- Textura
+		*Solid (ok)
+		*Checked (ok)
+		*Perlin
+		*Image
+	- Area Light
+		*Simples (ok)
+		*Complexo
+	- Dielétrico
+		*Simples
+		*Complexo(definindo onde tá e pra onde vai)
 __________________________________________________________
 
 ==========================================================

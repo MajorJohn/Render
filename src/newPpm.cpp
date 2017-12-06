@@ -28,8 +28,8 @@ void init(Render* render)
 // h:v -> resolution proportion
 //================================
 	int t = 150;
-	int h = 8;
-	int v = 4;
+	int h = 6;
+	int v = 3;
 //================================
 
 
@@ -53,12 +53,36 @@ std::shared_ptr<Triangle> floor1;
 std::shared_ptr<Triangle> floor2;
 
 std:: shared_ptr<Sphere> s1;
+std:: shared_ptr<Sphere> s2;
+std:: shared_ptr<Sphere> s3;
+std:: shared_ptr<Sphere> s4;
+std:: shared_ptr<Sphere> s5;
 
 std::shared_ptr<Surface> floor;
 
 std::shared_ptr<Texture> mate;
 
-s1 = std::make_shared<Sphere>(point3( 0, 2, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0.4,0)));
+std::shared_ptr<Texture> green;
+std::shared_ptr<Texture> blue;
+std::shared_ptr<Texture> red;
+std::shared_ptr<Texture> brown;
+std::shared_ptr<Texture> orange;
+std::shared_ptr<Texture> yellow;
+
+
+s1 = std::make_shared<Sphere>(point3( 1.6, 1, -1 ), 0.3, std::make_shared<Lambertian>(color (1,0.4,0)));
+s2 = std::make_shared<Sphere>(point3( 0.8, 1, -1 ), 0.3, std::make_shared<Lambertian>(color (1,0.4,0)));
+s3 = std::make_shared<Sphere>(point3( 0, 1, -1 ), 0.3, std::make_shared<Lambertian>(color (1,0.4,0)));
+s4 = std::make_shared<Sphere>(point3( -0.8, 1, -1 ), 0.3, std::make_shared<Lambertian>(color (1,0.4,0)));
+s5 = std::make_shared<Sphere>(point3( -1.6, 1, -1 ), 0.3, std::make_shared<Lambertian>(color (1,0.4,0)));
+
+red = std::make_shared<Constant_texture>(color (1,0.0,0.05));
+green = std::make_shared<Constant_texture>(color (0.05,0.5,0.0));
+blue = std::make_shared<Constant_texture>(color (0.0,0.3,0.8));
+brown = std::make_shared<Constant_texture>(color (0.43,0.28,0.16));
+orange = std::make_shared<Constant_texture>(color (0.8,0.2,0.0));
+yellow = std::make_shared<Constant_texture>(color (1,0.75,0.0));
+
 
 mate = std::make_shared<Checker_texture>();
 
@@ -84,10 +108,15 @@ rot[2] = 0.0;
 floor->transform(rot, 1, point3(0,1,0));
 floor->endTransform();
 floor->setTexture(mate);
-s1->setTexture(mate);
 
-floor1->setTexture(mate);
-floor2->setTexture(mate); 
+s1->setTexture(orange);
+s2->setTexture(red);
+s3->setTexture(yellow);
+s4->setTexture(green);
+s5->setTexture(blue);
+
+floor1->setTexture(brown);
+floor2->setTexture(brown); 
 
 t1->setTexture(mate);
 rot[1] = 90;
@@ -115,14 +144,18 @@ t4->setTexture(mate);
     //scene->addObject(std::make_shared<Sphere>(point3( 2, 0, -1 ), 0.5, std::make_shared<Lambertian>(color (1,0,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0.5, 0, -1 ), 0.4, std::make_shared<Lambertian>(color (0.4,0.2,0.8))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0, -100.5, -1 ), 100, std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
-    scene->addObject(t1);
-    scene->addObject(t2);
-    scene->addObject(t3);
-    scene->addObject(t4);
+    //scene->addObject(t1);
+    //scene->addObject(t2);
+    //scene->addObject(t3);
+    //scene->addObject(t4);
     scene->addObject(floor1);
     scene->addObject(floor2);
 	//scene->addObject(floor);
-	//scene->addObject(s1);
+	scene->addObject(s1);
+	scene->addObject(s2);
+	scene->addObject(s3);
+	scene->addObject(s4);
+	scene->addObject(s5);
 	//scene->addObject(std::make_shared<Sphere>(point3( 0.2, 0, -0.9 ), 0.1, std::make_shared<Lambertian>(color (1,0.5,0.6))));
     //scene->addObject(std::make_shared<Sphere>(point3( 0, 1, -1 ), 0.2, std::make_shared<Lambertian>(color (1,0.4,0))));
     //scene->addObject(std::make_shared<Triangle>(point3( 1, 0.5, -1 ), point3( 0.5, 1, -1 ), point3( 0, 0.5, -1 ), std::make_shared<Lambertian>(color (0.6,0.4,0.2))));
@@ -130,8 +163,10 @@ t4->setTexture(mate);
 
 //ADD LIGHTS
 //====================================================================================================================================
-    //scene->addLight(std::make_shared<SpotLight>(vec3 ( 0.5, 0, -1), color(1,1,1),vec3 (1.5,-1,0), 0.8));
-    scene->addLight(std::make_shared<PointLight>(vec3 ( 0, 4, 2 ), color(1,1,1), 0.5));
+    //scene->addLight(std::make_shared<SpotLight>(vec3 ( 1.6, 2, -1), color(1,1,1),vec3 (1.6,1,0)));
+    //scene->addLight(std::make_shared<SpotLight>(vec3 ( -1.6, 2, -1), color(1,1,1),vec3 (1.6,1,0)));
+    scene->addLight(std::make_shared<AreaLight>(vec3 ( 1.6, 2, -1), color(1,1,1),vec3 (1.6,1,0)));
+    //scene->addLight(std::make_shared<PointLight>(vec3 ( 0, 4, 2 ), color(1,1,1), 0.5));
     //scene->addLight(std::make_shared<GlobalLight>(vec3 (2,1,1), color(1,1,1)));
     //scene->addLight(std::make_shared<GlobalLight>(vec3 (2,1,1), color(0,0,1)));
 //====================================================================================================================================
@@ -142,8 +177,8 @@ t4->setTexture(mate);
 
 //CAMERA
 //================================================================================
-    float distance = 1;
-    point3 cameraOrigin(0, 1, 1);
+    float distance = 10;
+    point3 cameraOrigin(0, 2, 10);
     point3 lookAt(0, 0, 0);
     vec3 vUp(0,1,0);
     float blur = 0.0;
@@ -184,6 +219,7 @@ t4->setTexture(mate);
 //>>>>>NON EDITABLES<<<<<
     render->setRender(scene, image, camera);
     render->setImageType(imageType);
+    scene->endSceane();
 }
 
 void printLoading (int row, int nRow)
@@ -229,7 +265,7 @@ int main ()
 	{
 		animator.start();
 	}
-
+	
 	else
 	{	
 		for (auto row = nRow -1; row >= 0; --row)
@@ -250,7 +286,7 @@ int main ()
 		printLoading(nRow, nRow);
 		cout << ">>> Image.cpp COMPLETE!\n";
 	}
-
+	
 	gettimeofday(&tempo2, NULL);
 	finalTime = double((tempo2.tv_sec * 1000000 + tempo2.tv_usec) - (tempo1.tv_sec * 1000000 + tempo1.tv_usec))/1000000 ;
 
