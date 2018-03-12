@@ -1,0 +1,47 @@
+==========================================================
+                        How to do
+==========================================================
+
+----------------------------------------------------------
+	create video:
+	convert -delay 6 anim_*.ppm anim.mp4
+----------------------------------------------------------
+__________________________________________________________
+
+==========================================================
+                         Unidade 3
+==========================================================
+
+	- Malha
+		* Malha (ok)
+		* Aceleração
+			* Kd-tree, octree, bsp
+			* Hierarchical bounding boxes
+			* Multi-threads
+	- Textura
+		*Solid (ok)
+		*Checked (ok)
+		*Perlin
+		*Image
+	- Area Light
+		*Simples (ok)
+		*Complexo
+	- Dielétrico
+		*Simples (ok)
+		*Complexo(definindo onde tá e pra onde vai)
+__________________________________________________________
+
+==========================================================
+                           todo
+==========================================================
+
+	colocar no cout, quanto tempo passou e quanto tempo
+	falta
+
+	arrumar toon shader
+	
+	Criar classe malha de triangulos || .off | .obj ||
+
+	criar funções que retornam o centro de cada objeto
+	(na malha é o centro da malha(centro de um cubo))
+__________________________________________________________
